@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HostelHive — Find Your Home</title>
+  <meta name="description" content="HostelHive is the exclusive platform for students to find verified hostels. Browse real-time room availability and secure your ideal stay, stress-free.">
+  <meta name="keywords" content="hostel, students, accommodation, surampalem, booking">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236ee7ff'%3E%3Cpath d='M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.236L19.03 8.5 12 12.264 4.97 8.5 12 4.236zM4 9.328l8 4.618v9.11l-8-4.618V9.328zm16 0v9.11l-8 4.618v-9.11l8-4.618z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -35,7 +40,13 @@
       align-items:center;
     }
 
-    .logo { font-weight:700; font-size:20px; color:#fff; letter-spacing:-0.5px; }
+    .logo { 
+      font-weight:700; 
+      font-size:20px; 
+      color:#fff; 
+      letter-spacing:-0.5px;
+      text-decoration: none;
+    }
     nav a {
       margin-left:20px;
       text-decoration:none;
@@ -46,14 +57,16 @@
     nav a:hover { color:#fff; }
 
     .hero {
-      text-align:center; /* Centered the content */
+      text-align:center;
       padding:80px 40px;
-      max-width:800px; /* Adjusted max-width for better centering */
+      max-width:800px;
       margin:auto;
-      flex-grow: 1; /* Allows this section to fill available space */
+      flex-grow: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      animation: fadeIn 1s ease-in-out;
     }
 
     .hero h1 {
@@ -71,7 +84,7 @@
       color:var(--muted);
       font-size:16px;
       margin-bottom:24px;
-      max-width: 600px; /* Ensures paragraph text doesn't stretch too wide */
+      max-width: 600px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -85,15 +98,28 @@
       color:#fff;
       box-shadow:0 8px 24px rgba(0,0,0,0.4);
       text-decoration:none;
-      transition:transform 0.2s;
+      transition: all 0.2s ease;
     }
-    .btn:hover { transform:translateY(-2px); }
+    .btn:hover { 
+      transform:translateY(-3px); 
+      box-shadow:0 12px 28px rgba(0,0,0,0.5);
+    }
+
+    .auth-buttons {
+        display: flex;
+        gap: 15px;
+    }
 
     footer {
       text-align:center;
       padding:20px;
       font-size:13px;
       color:var(--muted);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes pulse {
@@ -107,18 +133,19 @@
 <body>
 
   <header>
-    <div class="logo">HostelHive</div>
-    <nav>
+    <a href="index.html" class="logo">HostelHive</a>
+    <nav class="auth-buttons">
+     
       <a href="signup.html" class="btn">Sign up</a>
     </nav>
   </header>
 
   <section class="hero">
     <div>
-      <h1><span>Find Your Hive</span><br> Find Your Home.</h1>
+      <h1><span>Find Your Hive.</span><br> Find Your Home.</h1>
       <p>HostelHive is the exclusive platform for students to find verified hostels.
 Browse real-time room availability and secure your ideal stay, stress-free.</p>
-      <a href="login.html" class="btn glow">Log in →</a>
+      <a href="login.html" class="btn glow">Log in</a>
     </div>
   </section>
 

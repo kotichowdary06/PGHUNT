@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Log In — HostelHive</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236ee7ff'%3E%3Cpath d='M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.236L19.03 8.5 12 12.264 4.97 8.5 12 4.236zM4 9.328l8 4.618v9.11l-8-4.618V9.328zm16 0v9.11l-8 4.618v-9.11l8-4.618z'/%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -69,11 +70,58 @@
       border-radius: 8px;
       color: #fff;
       font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .input-group input:focus {
+        outline: none;
+        border-color: var(--accent1);
+        box-shadow: 0 0 10px rgba(110, 231, 255, 0.3);
+    }
+
+    .role-selection {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    
+    .role-selection p {
+      margin-bottom: 12px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .role-options {
+      display: flex;
+      gap: 15px;
+    }
+
+    .role-options label {
+      flex: 1;
+      padding: 12px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .role-options input[type="radio"] {
+      display: none;
+    }
+
+    .role-options input[type="radio"]:checked + label {
+      border-color: var(--accent1);
+      background: rgba(110, 231, 255, 0.1);
+      color: #fff;
     }
     
     .forgot-password {
         text-align: right;
-        margin-top: -10px;
+        margin-top: 10px;
         margin-bottom: 20px;
     }
 
@@ -99,10 +147,13 @@
       box-shadow:0 8px 24px rgba(0,0,0,0.4);
       text-decoration:none;
       cursor: pointer;
-      transition:transform 0.2s;
+      transition: all 0.2s ease;
       font-size: 16px;
     }
-    .btn:hover { transform:translateY(-2px); }
+    .btn:hover { 
+        transform:translateY(-3px); 
+        box-shadow:0 12px 28px rgba(0,0,0,0.5);
+    }
 
     .signup-link {
       margin-top: 25px;
@@ -125,14 +176,25 @@
 
   <div class="login-card">
     <h1>Welcome Back!</h1>
-    <form>
+    <form id="loginForm">
+      <div class="role-selection">
+        <p>Log in as:</p>
+        <div class="role-options">
+          <input type="radio" id="student" name="role" value="student" checked>
+          <label for="student">🧑‍🎓 Student</label>
+          
+          <input type="radio" id="owner" name="role" value="owner">
+          <label for="owner">🏡 Owner</label>
+        </div>
+      </div>
+
       <div class="input-group">
         <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" name="email" required value="student@hostelhive.com">
       </div>
       <div class="input-group">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" required value="password123">
       </div>
       
       <div class="forgot-password">
@@ -145,6 +207,56 @@
       Don't have an account? <a href="signup.html">Sign Up</a>
     </p>
   </div>
+
+  <script>
+    const studentCredentials = {
+        email: 'student@hostelhive.com',
+        password: 'password123'
+    };
+    const ownerCredentials = {
+        email: 'owner@hostelhive.com',
+        password: 'ownerpassword'
+    };
+
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    // Function to update login fields based on selected role
+    function updateLoginFields(role) {
+        if (role === 'student') {
+            emailInput.value = studentCredentials.email;
+            passwordInput.value = studentCredentials.password;
+        } else {
+            emailInput.value = ownerCredentials.email;
+            passwordInput.value = ownerCredentials.password;
+        }
+    }
+
+    // Add event listeners to radio buttons
+    document.querySelectorAll('input[name="role"]').forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            updateLoginFields(event.target.value);
+        });
+    });
+
+    // Handle form submission
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Stop the form from submitting the traditional way
+      
+      const selectedRole = document.querySelector('input[name="role"]:checked').value;
+      
+      if (selectedRole === 'owner') {
+        // Redirect to the owner dashboard
+        window.location.href = 'owner-dashboard.html';
+      } else {
+        // Redirect to the student dashboard
+        window.location.href = 'dashboard.html';
+      }
+    });
+
+    // Set initial fields on page load
+    updateLoginFields('student');
+  </script>
 
 </body>
 </html>

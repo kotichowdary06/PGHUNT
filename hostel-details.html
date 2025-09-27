@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Details — PG-Connect</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236ee7ff'%3E%3Cpath d='M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.236L19.03 8.5 12 12.264 4.97 8.5 12 4.236zM4 9.328l8 4.618v9.11l-8-4.618V9.328zm16 0v9.11l-8 4.618v-9.11l8-4.618z'/%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg1: #0f172a;
+            --bg2: #0b1227;
+            --card-bg: #1e293b;
+            --accent1: #6ee7ff;
+            --btn1: #9333ea;
+            --btn2: #ec4899;
+            --muted: rgba(255,255,255,0.7);
+            --border-color: rgba(255,255,255,0.1);
+        }
+        * { box-sizing: border-box; }
+        html, body { margin:0; padding:0; font-family:"Inter", sans-serif; color:#fff; }
+        body { background: linear-gradient(135deg,var(--bg1),var(--bg2)); min-height: 100vh; }
+
+        .dashboard-header { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); }
+        .logo { font-weight:700; font-size:20px; color:#fff; text-decoration: none; }
+        .user-nav a { margin-left: 20px; text-decoration: none; color: var(--muted); font-weight: 500; }
+
+        .details-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .main-content h1 {
+            font-size: 32px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .hostel-location {
+            font-size: 16px;
+            color: var(--muted);
+            margin-bottom: 25px;
+        }
+
+        .photo-gallery img {
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 25px;
+        }
+
+        .details-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        .details-section h2 {
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .amenities-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .amenities-list li {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .rules p {
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            height: fit-content;
+            border: 1px solid var(--border-color);
+        }
+        .price-info { text-align: center; }
+        .price-info .rent { font-size: 28px; font-weight: 700; color: var(--accent1); }
+        .price-info .deposit { font-size: 14px; color: var(--muted); margin-top: 5px; }
+        
+        .btn { display: block; width: 100%; text-align: center; margin-top: 25px; padding: 14px 24px; font-weight:700; border-radius:12px; border: none; background:linear-gradient(135deg,var(--btn1),var(--btn2)); color:#fff; cursor: pointer; font-size: 16px; text-decoration: none; }
+        
+        @media (max-width: 900px) {
+            .details-container { grid-template-columns: 1fr; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <a href="index.html" class="logo">PG-Connect</a>
+        <nav class="user-nav">
+          <a href="dashboard.html">Back to Listings</a>
+        </nav>
+    </header>
+
+    <div id="loader" style="text-align: center; padding: 50px;">Loading hostel details...</div>
+
+    <div id="content" class="details-container" style="display: none;">
+        <div class="main-content">
+            <h1 id="hostel-name">Hostel Name</h1>
+            <p id="hostel-location" class="hostel-location">Location</p>
+            <div class="photo-gallery">
+                <img id="main-photo" src="" alt="Hostel main photo">
+            </div>
+            <div class="details-section amenities">
+                <h2>Amenities</h2>
+                <ul id="amenities-list" class="amenities-list"></ul>
+            </div>
+            <div class="details-section rules">
+                <h2>Rules & Regulations</h2>
+                <p id="hostel-rules"></p>
+            </div>
+        </div>
+        <aside class="sidebar">
+            <div class="price-info">
+                <div id="hostel-rent" class="rent">₹0</div>
+                <div id="hostel-deposit" class="deposit"></div>
+            </div>
+            <a href="#" class="btn">Contact Owner</a>
+        </aside>
+    </div>
+
+<script>
+    // This data should be consistent with the dashboard's data
+    const DUMMY_HOSTELS = [
+        { id: 1, name: "Sri Sai Deluxe Hostel", rent: 6500, sharing: 3, gender: "boys", location: "Surampalem", rating: "4.5 (22 Reviews)", amenities: ["wifi", "food"], rules: "Curfew is 10 PM. No guests allowed.", deposit: 6500, isVerified: true, imageUrl: "https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg" },
+        { id: 2, name: "Krishna Boys Hostel", rent: 7200, sharing: 2, gender: "boys", location: "Kakinada", rating: "4.2 (18 Reviews)", amenities: ["wifi", "ac"], rules: "Rent must be paid by the 5th of each month.", deposit: 7200, isVerified: false, imageUrl: "https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg" },
+        { id: 3, name: "Lakshmi Girls Hostel", rent: 6800, sharing: 3, gender: "girls", location: "Surampalem", rating: "4.8 (35 Reviews)", amenities: ["wifi", "laundry", "food"], rules: "Strictly for students. ID cards required.", deposit: 6800, isVerified: true, imageUrl: "https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg" },
+        { id: 4, name: "Rajahmundry Co-Living", rent: 8500, sharing: 2, gender: "co-ed", location: "Rajahmundry", rating: "4.6 (12 Reviews)", amenities: ["wifi", "ac", "laundry"], rules: "Respect common areas. Quiet hours after 11 PM.", deposit: 10000, isVerified: true, imageUrl: "https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg" },
+        { id: 5, name: "Kakinada Students Paradise", rent: 5500, sharing: 4, gender: "boys", location: "Kakinada", rating: "3.9 (41 Reviews)", amenities: ["wifi"], rules: "Basic rules of conduct apply.", deposit: 5500, isVerified: false, imageUrl: "https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg" },
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const contentDiv = document.getElementById('content');
+        const loaderDiv = document.getElementById('loader');
+
+        // 1. Get the hostel ID from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const hostelId = parseInt(urlParams.get('id'), 10);
+
+        // 2. Find the corresponding hostel data
+        const hostel = DUMMY_HOSTELS.find(h => h.id === hostelId);
+
+        // 3. If no hostel is found, show an error
+        if (!hostel) {
+            loaderDiv.textContent = 'Sorry, this hostel could not be found.';
+            return;
+        }
+
+        // 4. Populate the page with the hostel's data
+        document.getElementById('hostel-name').textContent = hostel.name;
+        document.getElementById('hostel-location').textContent = hostel.location;
+        document.getElementById('main-photo').src = hostel.imageUrl;
+        document.getElementById('hostel-rules').textContent = hostel.rules;
+        document.getElementById('hostel-rent').textContent = `₹${hostel.rent.toLocaleString()}/month`;
+        document.getElementById('hostel-deposit').textContent = `Security Deposit: ₹${hostel.deposit.toLocaleString()}`;
+
+        // Populate amenities list
+        const amenitiesList = document.getElementById('amenities-list');
+        amenitiesList.innerHTML = ''; // Clear any existing items
+        hostel.amenities.forEach(amenity => {
+            const li = document.createElement('li');
+            li.textContent = amenity.charAt(0).toUpperCase() + amenity.slice(1).replace('-', ' ');
+            amenitiesList.appendChild(li);
+        });
+
+        // 5. Hide the loader and show the content
+        loaderDiv.style.display = 'none';
+        contentDiv.style.display = 'grid';
+    });
+</script>
+
+</body>
+</html>

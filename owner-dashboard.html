@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Owner Dashboard — HostelHive</title>
+  <title>Owner Dashboard — PG-Connect</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236ee7ff'%3E%3Cpath d='M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.236L19.03 8.5 12 12.264 4.97 8.5 12 4.236zM4 9.328l8 4.618v9.11l-8-4.618V9.328zm16 0v9.11l-8 4.618v-9.11l8-4.618z'/%3E%3C/svg%3E">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -18,190 +19,387 @@
       --muted: rgba(255,255,255,0.7);
       --border-color: rgba(255,255,255,0.1);
     }
-
     * { box-sizing: border-box; }
     html, body { margin:0; padding:0; font-family:"Inter", sans-serif; color:#fff; }
+    body { background: linear-gradient(135deg,var(--bg1),var(--bg2)); min-height: 100vh; }
 
-    body {
-      background: linear-gradient(135deg,var(--bg1),var(--bg2));
-      min-height: 100vh;
-    }
-
-    .dashboard-header {
-      padding: 15px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0,0,0,0.2);
-      border-bottom: 1px solid var(--border-color);
-    }
-    .logo { font-weight:700; font-size:20px; color:#fff; }
-    .user-nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: var(--muted);
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-    .user-nav a:hover { color:#fff; }
+    .dashboard-header { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); }
+    .logo { font-weight:700; font-size:20px; color:#fff; text-decoration: none; }
+    .user-nav a { margin-left: 20px; text-decoration: none; color: var(--muted); font-weight: 500; }
     .logout-btn { color: #f87171; }
 
-    .owner-dashboard {
-      padding: 30px 40px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
+    .owner-dashboard { padding: 30px 40px; max-width: 900px; margin: 0 auto; }
+    .dashboard-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 30px; padding: 30px; }
+    .dashboard-card h2 { margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; font-size: 20px; }
+    .btn { display:inline-block; padding: 12px 24px; font-weight:600; border-radius:12px; border: none; background:linear-gradient(135deg,var(--btn1),var(--btn2)); color:#fff; text-decoration:none; cursor: pointer; transition: all 0.2s ease; }
+    .btn:hover { transform:translateY(-3px); box-shadow:0 6px 15px rgba(0,0,0,0.4); }
+    .btn:disabled { background: #555; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn.full-width { width: 100%; padding-top: 14px; padding-bottom: 14px; font-size: 16px; }
+    
+    .input-group { margin-bottom: 20px; }
+    .input-group label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--muted); }
+    .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 16px; font-family: "Inter", sans-serif; }
+    .input-group textarea { resize: vertical; min-height: 100px; }
 
-    .dashboard-card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 30px;
-      padding: 30px;
-    }
-
-    /* Preview Card */
-    .preview-card {
-        display: flex;
-        gap: 30px;
-        align-items: center;
-    }
-    .preview-image img {
-        width: 200px;
-        height: 150px;
-        object-fit: cover;
-        border-radius: 12px;
-    }
-    .preview-details h2 { margin-top: 0; }
-    .preview-details p { color: var(--muted); }
-
-    .btn {
-      display:inline-block;
-      padding: 12px 24px;
-      font-weight:600;
-      border-radius:12px;
-      border: none;
-      background:linear-gradient(135deg,var(--btn1),var(--btn2));
-      color:#fff;
-      text-decoration:none;
-      cursor: pointer;
-      transition:transform 0.2s;
-    }
-    .btn:hover { transform:translateY(-2px); }
-
-    /* Availability Card */
-    .availability-card h2 {
-        margin-top: 0;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 15px;
-        margin-bottom: 25px;
-    }
-    .room-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
-    }
-    .room-row:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-        padding-bottom: 0;
-    }
+    .room-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+    .room-row:last-child { border-bottom: none; }
     .room-type { font-size: 18px; }
     .counter { display: flex; align-items: center; gap: 15px; }
-    .counter input {
-        width: 60px;
-        text-align: center;
-        background: rgba(0,0,0,0.2);
-        border: 1px solid var(--border-color);
-        color: #fff;
-        border-radius: 8px;
-        padding: 8px;
-        font-size: 16px;
-    }
-    /* Hides the arrows on number inputs for Chrome, Safari, Edge */
-    .counter input::-webkit-outer-spin-button,
-    .counter input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    .btn-stepper {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        border: 1px solid var(--border-color);
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
-    }
-    .availability-card .btn {
-        width: 100%;
-        margin-top: 15px;
-        padding: 14px;
-        font-size: 16px;
-    }
-    @media (max-width: 768px) {
-        .preview-card {
-            flex-direction: column;
-            text-align: center;
-        }
-    }
+    .counter input { width: 60px; text-align: center; }
+    .btn-stepper { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border-color); background: rgba(255,255,255,0.1); color: #fff; font-size: 20px; cursor: pointer; }
+
+    .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    .checkbox-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; }
+    
+    .add-amenity-group { display: flex; gap: 10px; margin-bottom: 25px; }
+    .add-amenity-group input { flex-grow: 1; }
+    .add-amenity-group button { padding: 12px 20px; }
+
+    .file-upload-group label.file-label { display: block; text-align: center; padding: 12px; border: 2px dashed var(--border-color); border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    .file-upload-group label.file-label:hover { background: rgba(255,255,255,0.05); }
+    .file-upload-group .file-name { color: var(--accent1); margin-top: 10px; text-align: center; font-style: italic; }
+
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .photo-item { position: relative; }
+    .photo-item img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; }
+    .photo-item .delete-btn { display: none; position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; cursor: pointer; font-weight: bold; }
+    .photo-item:hover .delete-btn { display: block; }
   </style>
 </head>
 <body>
-
   <header class="dashboard-header">
-    <div class="logo">HostelHive</div>
+    <a href="index.html" class="logo">PG-Connect</a>
     <nav class="user-nav">
       <span>Welcome, Owner!</span>
-      <a href="#" class="logout-btn">Log Out</a>
+      <a href="index.html" class="logout-btn">Log Out</a>
     </nav>
   </header>
 
   <main class="owner-dashboard">
-    <div class="dashboard-card preview-card">
-      <div class="preview-image">
-        <img src="https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg" alt="Your Hostel">
-      </div>
-      <div class="preview-details">
-        <h2>Sri Sai Deluxe Hostel</h2>
-        <p>Your listing is live and visible to students.</p>
-        <button class="btn">Edit Details</button>
-      </div>
+    <div class="dashboard-card">
+        <h2>Hostel Details</h2>
+        <form id="detailsForm">
+            <div class="input-group">
+                <label for="hostelName">Hostel Name</label>
+                <input type="text" id="hostelName" name="name">
+            </div>
+            <div class="input-group">
+                <label for="location">Location</label>
+                <select id="location" name="location">
+                  <option value="Surampalem">Surampalem</option>
+                  <option value="Kakinada">Kakinada</option>
+                  <option value="Rajahmundry">Rajahmundry</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="contactNumber">Contact Number</label>
+                <input type="tel" id="contactNumber" name="contact">
+            </div>
+            <div class="input-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="securityDeposit">Security Deposit (₹)</label>
+                <input type="number" id="securityDeposit" name="deposit">
+            </div>
+            <div class="input-group">
+                <label for="hostelRules">Rules & Regulations</label>
+                <textarea id="hostelRules" name="rules"></textarea>
+            </div>
+            <button type="submit" class="btn full-width">Save Details</button>
+        </form>
     </div>
 
-    <div class="dashboard-card availability-card">
+    <div class="dashboard-card">
       <h2>Live Room Availability</h2>
-      <div class="room-row">
-        <span class="room-type">2-Sharing (AC)</span>
-        <div class="counter">
-          <button class="btn-stepper">-</button>
-          <input type="number" value="3" min="0">
-          <button class="btn-stepper">+</button>
+      <form id="availabilityForm">
+        <div class="room-row" data-room-type="2-Sharing (AC)">
+            <span class="room-type">2-Sharing (AC)</span>
+            <div class="counter">
+                <button type="button" class="btn-stepper" aria-label="Decrease count">-</button>
+                <input type="number" value="0" min="0">
+                <button type="button" class="btn-stepper" aria-label="Increase count">+</button>
+            </div>
         </div>
-      </div>
-      <div class="room-row">
-        <span class="room-type">3-Sharing (AC)</span>
-        <div class="counter">
-          <button class="btn-stepper">-</button>
-          <input type="number" value="5" min="0">
-          <button class="btn-stepper">+</button>
+        <div class="room-row" data-room-type="3-Sharing (AC)">
+            <span class="room-type">3-Sharing (AC)</span>
+            <div class="counter">
+                <button type="button" class="btn-stepper" aria-label="Decrease count">-</button>
+                <input type="number" value="0" min="0">
+                <button type="button" class="btn-stepper" aria-label="Increase count">+</button>
+            </div>
         </div>
-      </div>
-      <div class="room-row">
-        <span class="room-type">4-Sharing (Non-AC)</span>
-        <div class="counter">
-          <button class="btn-stepper">-</button>
-          <input type="number" value="0" min="0">
-          <button class="btn-stepper">+</button>
+        <div class="room-row" data-room-type="4-Sharing (Non-AC)">
+            <span class="room-type">4-Sharing (Non-AC)</span>
+            <div class="counter">
+                <button type="button" class="btn-stepper" aria-label="Decrease count">-</button>
+                <input type="number" value="0" min="0">
+                <button type="button" class="btn-stepper" aria-label="Increase count">+</button>
+            </div>
         </div>
-      </div>
-      <button class="btn">Save Changes</button>
+        <button type="submit" class="btn full-width">Save Availability</button>
+      </form>
+    </div>
+
+    <div class="dashboard-card">
+        <h2>Amenities</h2>
+        <form id="amenitiesForm">
+            <div id="amenitiesCheckboxGroup" class="checkbox-group"></div>
+            <div class="add-amenity-group">
+                <input type="text" id="newAmenityInput" placeholder="e.g., Geyser, TV...">
+                <button type="button" id="addAmenityBtn" class="btn">Add</button>
+            </div>
+            <button type="submit" class="btn full-width">Save Amenities</button>
+        </form>
+    </div>
+
+    <div class="dashboard-card">
+        <h2>Photo Gallery</h2>
+        <div id="photoGrid" class="photo-grid"></div>
+        <input type="file" id="photoUploadInput" accept="image/*" multiple style="display: none;">
+        <button type="button" id="photoUploadBtn" class="btn full-width">Upload New Photos</button>
+    </div>
+
+    <div class="dashboard-card">
+        <h2>Food Menu</h2>
+        <form id="menuForm">
+            <div class="input-group file-upload-group">
+                <label for="menuUploadInput" class="file-label">Click to upload Menu (PDF, JPG, etc.)</label>
+                <input type="file" id="menuUploadInput" style="display: none;">
+                <div id="menuFileName" class="file-name"></div>
+            </div>
+            <button type="submit" class="btn full-width">Save Menu</button>
+        </form>
     </div>
   </main>
+  
+<script>
+    // 1. INITIAL DATA & STATE MANAGEMENT
+    const DUMMY_DATA = {
+        name: "Sri Sai Deluxe Hostel",
+        location: "Surampalem",
+        contact: "+91 98765 43210",
+        address: "Near JNTUK, Surampalem, Andhra Pradesh",
+        deposit: 5000,
+        rules: "Curfew is 10 PM. Rent must be paid by the 5th of each month.",
+        availability: [
+            { type: "2-Sharing (AC)", count: 3 },
+            { type: "3-Sharing (AC)", count: 5 },
+            { type: "4-Sharing (Non-AC)", count: 0 },
+        ],
+        amenities: ["wifi", "food", "power-backup", "laundry"],
+        menuFile: "weekly-menu.pdf",
+        photos: [
+            "https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg",
+            "https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg"
+        ],
+        performance: { views: 1254, inquiries: 48 }
+    };
+    const ALL_POSSIBLE_AMENITIES = ["wifi", "ac", "food", "laundry", "parking", "power-backup"];
+    
+    let hostelData = {};
+
+    function getHostelData() {
+        const savedData = localStorage.getItem('hostelData');
+        if (savedData) return JSON.parse(savedData);
+        localStorage.setItem('hostelData', JSON.stringify(DUMMY_DATA));
+        return DUMMY_DATA;
+    }
+
+    function saveHostelData() {
+        localStorage.setItem('hostelData', JSON.stringify(hostelData));
+    }
+
+    function populateForms() {
+        document.getElementById('hostelName').value = hostelData.name;
+        document.getElementById('location').value = hostelData.location;
+        document.getElementById('contactNumber').value = hostelData.contact;
+        document.getElementById('address').value = hostelData.address;
+        document.getElementById('securityDeposit').value = hostelData.deposit;
+        document.getElementById('hostelRules').value = hostelData.rules;
+
+        hostelData.availability.forEach(room => {
+            const row = document.querySelector(`.room-row[data-room-type="${room.type}"]`);
+            if (row) row.querySelector('input[type="number"]').value = room.count;
+        });
+
+        const menuFileNameDiv = document.getElementById('menuFileName');
+        menuFileNameDiv.textContent = hostelData.menuFile ? `Current file: ${hostelData.menuFile}` : 'No file uploaded.';
+
+        renderAmenities();
+        renderPhotos();
+    }
+    
+    function renderPhotos() {
+        const grid = document.getElementById('photoGrid');
+        grid.innerHTML = '';
+        hostelData.photos.forEach((photoUrl, index) => {
+            const item = document.createElement('div');
+            item.className = 'photo-item';
+            item.innerHTML = `
+                <img src="${photoUrl}" alt="Hostel Photo ${index + 1}">
+                <button class="delete-btn" data-index="${index}">X</button>
+            `;
+            grid.appendChild(item);
+        });
+    }
+
+    function renderAmenities() {
+        const container = document.getElementById('amenitiesCheckboxGroup');
+        container.innerHTML = '';
+        
+        const uniqueAmenities = new Set([...ALL_POSSIBLE_AMENITIES, ...hostelData.amenities]);
+
+        uniqueAmenities.forEach(amenity => {
+            const isChecked = hostelData.amenities.includes(amenity);
+            const label = document.createElement('label');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'amenity';
+            checkbox.value = amenity;
+            checkbox.checked = isChecked;
+            
+            label.appendChild(checkbox);
+            label.append(` ${amenity.charAt(0).toUpperCase() + amenity.slice(1).replace('-', ' ')}`);
+            container.appendChild(label);
+        });
+    }
+
+    async function handleSave(button, callback) {
+        const originalText = button.textContent;
+        button.textContent = 'Saving...';
+        button.disabled = true;
+
+        await new Promise(resolve => setTimeout(resolve, 500)); 
+        
+        callback();
+        saveHostelData();
+
+        button.textContent = originalText;
+        button.disabled = false;
+        alert('Changes saved successfully!');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        hostelData = getHostelData();
+        populateForms();
+
+        // Details Form
+        document.getElementById('detailsForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const button = this.querySelector('button[type="submit"]');
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            handleSave(button, () => {
+                hostelData = { ...hostelData, ...data };
+            });
+        });
+
+        // Availability Form
+        document.getElementById('availabilityForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const button = this.querySelector('button[type="submit"]');
+            handleSave(button, () => {
+                const newAvailability = [];
+                this.querySelectorAll('.room-row').forEach(row => {
+                    newAvailability.push({
+                        type: row.dataset.roomType,
+                        count: parseInt(row.querySelector('input').value, 10)
+                    });
+                });
+                hostelData.availability = newAvailability;
+            });
+        });
+
+        // Amenities Form
+        document.getElementById('amenitiesForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const button = this.querySelector('button[type="submit"]');
+            handleSave(button, () => {
+                const newAmenities = [];
+                this.querySelectorAll('input[name="amenity"]:checked').forEach(checkbox => {
+                    newAmenities.push(checkbox.value);
+                });
+                hostelData.amenities = newAmenities;
+            });
+        });
+
+        // FIX: Add Amenity Button
+        document.getElementById('addAmenityBtn').addEventListener('click', function() {
+            const input = document.getElementById('newAmenityInput');
+            const newAmenity = input.value.trim().toLowerCase().replace(' ', '-');
+            if (newAmenity && !ALL_POSSIBLE_AMENITIES.includes(newAmenity)) {
+                hostelData.amenities.push(newAmenity);
+                renderAmenities(); // Re-render the checkbox list to include the new one
+                saveHostelData();
+                input.value = '';
+            } else if (!newAmenity) {
+                alert('Please enter an amenity name.');
+            } else {
+                alert('This amenity already exists.');
+            }
+        });
+
+        // FIX: Photo Gallery
+        document.getElementById('photoUploadBtn').addEventListener('click', () => {
+            document.getElementById('photoUploadInput').click(); // This triggers the hidden file input
+        });
+        
+        document.getElementById('photoUploadInput').addEventListener('change', function(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                     hostelData.photos.push("https://storage.googleapis.com/gweb-aip-images/prod/2024/09/17/1726601445100-A_vibrant_and_clean_hostel_room_designed_in_a_modern__minimalist_style._The_room_features_a.jpeg");
+                }
+                saveHostelData();
+                renderPhotos();
+                alert(`${files.length} photo(s) have been added!`);
+            }
+        });
+
+        document.getElementById('photoGrid').addEventListener('click', function(event) {
+            if (event.target.classList.contains('delete-btn')) {
+                const index = parseInt(event.target.dataset.index, 10);
+                if (confirm('Are you sure you want to delete this photo?')) {
+                    hostelData.photos.splice(index, 1);
+                    saveHostelData();
+                    renderPhotos();
+                }
+            }
+        });
+
+        // FIX: Menu Form
+        document.getElementById('menuForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Menu file name has been saved!');
+        });
+        
+        document.getElementById('menuUploadInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                hostelData.menuFile = file.name;
+                saveHostelData();
+                document.getElementById('menuFileName').textContent = `Selected: ${file.name}`;
+            }
+        });
+        
+        // Counter Button Logic
+        document.querySelectorAll('.counter').forEach(counter => {
+            const minusBtn = counter.querySelector('.btn-stepper:first-of-type');
+            const plusBtn = counter.querySelector('.btn-stepper:last-of-type');
+            const input = counter.querySelector('input[type="number"]');
+            minusBtn.addEventListener('click', () => {
+                let currentValue = parseInt(input.value);
+                if (currentValue > 0) input.value = currentValue - 1;
+            });
+            plusBtn.addEventListener('click', () => {
+                let currentValue = parseInt(input.value);
+                input.value = currentValue + 1;
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
