@@ -193,20 +193,42 @@
   </div>
 
   <script>
-    document.getElementById('signupForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Stop the form from submitting the traditional way
-      
-      const selectedRole = document.querySelector('input[name="role"]:checked').value;
-      
-      if (selectedRole === 'owner') {
-        // Redirect to the owner dashboard
-        window.location.href = 'owner-dashboard.html';
+  document.getElementById('signupForm').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Stop the form from submitting the old way
+
+    // 1. Get all the values from the form inputs
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const role = document.querySelector('input[name="role"]:checked').value;
+
+    try {
+      // 2. Send the data to the backend API using fetch
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fullName, email, password, role }),
+      });
+
+      const data = await response.json();
+
+      // 3. Handle the response from the server
+      if (response.ok) {
+        // If successful, tell the user and redirect to the login page
+        alert('Signup successful! Please log in.');
+        window.location.href = 'login.html';
       } else {
-        // Redirect to the student dashboard
-        window.location.href = 'dashboard.html';
+        // If there's an error (like "User already exists"), show the message
+        alert('Error: ' + data.msg);
       }
-    });
-  </script>
+    } catch (error) {
+      console.error('Signup failed:', error);
+      alert('An error occurred. Please try again.');
+    }
+  });
+</script>
 
 </body>
 </html>

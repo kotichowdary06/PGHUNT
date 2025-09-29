@@ -207,56 +207,49 @@
       Don't have an account? <a href="signup.html">Sign Up</a>
     </p>
   </div>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-  <script>
-    const studentCredentials = {
-        email: 'student@hostelhive.com',
-        password: 'password123'
-    };
-    const ownerCredentials = {
-        email: 'owner@hostelhive.com',
-        password: 'ownerpassword'
-    };
+    // 1. Get the email and password
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const role = document.querySelector('input[name="role"]:checked').value; // Get selected role
 
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
+    try {
+      // 2. Send the credentials to the backend
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Function to update login fields based on selected role
-    function updateLoginFields(role) {
-        if (role === 'student') {
-            emailInput.value = studentCredentials.email;
-            passwordInput.value = studentCredentials.password;
+      const data = await response.json();
+
+      // 3. Handle the response
+      if (response.ok) {
+        // SUCCESS! The server sent back a token.
+        // 4. Save the token to the browser's local storage. This keeps the user logged in.
+        localStorage.setItem('token', data.token);
+
+        // 5. Redirect to the correct dashboard based on the role
+        if (role === 'owner') {
+          window.location.href = 'owner-dashboard.html';
         } else {
-            emailInput.value = ownerCredentials.email;
-            passwordInput.value = ownerCredentials.password;
+          window.location.href = 'dashboard.html';
         }
-    }
-
-    // Add event listeners to radio buttons
-    document.querySelectorAll('input[name="role"]').forEach(radio => {
-        radio.addEventListener('change', (event) => {
-            updateLoginFields(event.target.value);
-        });
-    });
-
-    // Handle form submission
-    document.getElementById('loginForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Stop the form from submitting the traditional way
-      
-      const selectedRole = document.querySelector('input[name="role"]:checked').value;
-      
-      if (selectedRole === 'owner') {
-        // Redirect to the owner dashboard
-        window.location.href = 'owner-dashboard.html';
       } else {
-        // Redirect to the student dashboard
-        window.location.href = 'dashboard.html';
+        // If login failed (e.g., "Invalid credentials"), show the error
+        alert('Error: ' + data.msg);
       }
-    });
-
-    // Set initial fields on page load
-    updateLoginFields('student');
-  </script>
+    } catch (error) {
+      console.error('Login failed:', error);
+      alert('An error occurred. Please try again.');
+    }
+  });
+</script>>
 
 </body>
 </html>
